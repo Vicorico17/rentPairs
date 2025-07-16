@@ -14,6 +14,7 @@ A modern, AI-powered rental matching platform that connects property hosts with 
 
 - **🎯 Smart Matching Algorithm** - AI-powered compatibility scoring based on 30+ data points
 - **📱 Tinder-Style Swiping** - Intuitive property discovery for tenants
+- **🏢 Partner Properties** - Real estate listings from verified partners
 - **💬 Real-Time Chat** - Instant messaging between hosts and tenants
 - **📝 Comprehensive Onboarding** - Detailed preference and lifestyle profiling
 - **🏡 Property Management** - Full-featured property listing and management
