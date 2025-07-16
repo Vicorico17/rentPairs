@@ -21,7 +21,7 @@ export function RentalMatchUI() {
     setProperties(scoredProperties)
   }, [])
 
-  const handleSwipe = () => {
+  const handleSwipe = (direction: "left" | "right") => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % properties.length)
   }
 
@@ -50,7 +50,11 @@ export function RentalMatchUI() {
             </div>
           )}
           {currentProperty ? (
-            <PropertySwipeCard key={currentProperty.id} property={currentProperty} />
+            <PropertySwipeCard 
+              key={currentProperty.id} 
+              property={currentProperty} 
+              onSwipe={handleSwipe}
+            />
           ) : (
             <Card className="flex items-center justify-center w-full h-full">
               <p className="text-lg text-gray-500">No more properties</p>
@@ -71,7 +75,7 @@ export function RentalMatchUI() {
             variant="outline"
             size="icon"
             className="w-20 h-20 rounded-full border-2 border-red-500 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 bg-transparent"
-            onClick={handleSwipe}
+            onClick={() => handleSwipe("left")}
           >
             <X className="w-10 h-10" />
             <span className="sr-only">Skip</span>
@@ -80,7 +84,7 @@ export function RentalMatchUI() {
             variant="outline"
             size="icon"
             className="w-20 h-20 rounded-full border-2 border-green-500 text-green-500 hover:bg-green-100 dark:hover:bg-green-900/50 bg-transparent"
-            onClick={handleSwipe}
+            onClick={() => handleSwipe("right")}
           >
             <Heart className="w-10 h-10" />
             <span className="sr-only">Like</span>
@@ -89,7 +93,7 @@ export function RentalMatchUI() {
             variant="outline"
             size="icon"
             className="w-16 h-16 rounded-full border-2 border-purple-500 text-purple-500 hover:bg-purple-100 dark:hover:bg-purple-900/50 bg-transparent"
-            onClick={handleSwipe}
+            onClick={() => handleSwipe("right")}
           >
             <Zap className="w-8 h-8" />
             <span className="sr-only">Super Like</span>

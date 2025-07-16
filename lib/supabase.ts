@@ -47,6 +47,29 @@ export type Database = {
           last_login?: string | null
         }
       }
+      partner_leads: {
+        Row: {
+          id: number
+          name: string
+          address: string
+          size: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          name: string
+          address: string
+          size: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          name?: string
+          address?: string
+          size?: string
+          created_at?: string
+        }
+      }
       tenant_profiles: {
         Row: {
           id: string

@@ -2,7 +2,9 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Users, Home, Building, Twitter, Instagram, Facebook, ShieldCheck, Lock, EyeOff } from "lucide-react"
+import { PropertiesModal } from "@/components/properties-modal"
+import { Users, Home, Building, Twitter, Instagram, Facebook, ShieldCheck, Lock, EyeOff, Search, MapPin } from "lucide-react"
+import * as React from "react"
 
 const AppLogo = () => (
   <div className="flex flex-col leading-tight font-bold">
@@ -12,6 +14,8 @@ const AppLogo = () => (
 )
 
 export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" | null) => void }) {
+  const [showPropertiesModal, setShowPropertiesModal] = React.useState(false)
+
   return (
     <div className="w-full bg-beige-50 dark:bg-gray-950 text-gray-800 dark:text-gray-200 font-sans">
       {/* Sticky Navbar */}
@@ -112,7 +116,7 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
             <Card className="p-6 rounded-xl">
               <CardContent>
                 <p className="mt-4 italic text-lg">
-                  “Am găsit coleg de apartament în 2 zile. Incredibil de simplu față de grupurile de Facebook.”
+                  "Am găsit coleg de apartament în 2 zile. Incredibil de simplu față de grupurile de Facebook."
                 </p>
                 <div className="mt-4 flex items-center gap-3">
                   <Avatar>
@@ -129,8 +133,8 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
             <Card className="p-6 rounded-xl">
               <CardContent>
                 <p className="mt-4 italic text-lg">
-                  “Mi-am închiriat garsoniera din Militari fără bătăi de cap. Am primit doar cereri de la oameni
-                  serioși.”
+                  "Mi-am închiriat garsoniera din Militari fără bătăi de cap. Am primit doar cereri de la oameni
+                  serioși."
                 </p>
                 <div className="mt-4 flex items-center gap-3">
                   <Avatar>
@@ -144,6 +148,51 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
                 </div>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Partner Properties Section - NEW */}
+      <section className="py-20 bg-blue-50 dark:bg-blue-950/20">
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-3xl mx-auto">
+            <Building className="w-16 h-16 mx-auto text-blue-600 mb-6" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Proprietăți de la Partenerii Noștri
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+              Descoperă sute de proprietăți verificate de la partenerii noștri de încredere. 
+              Găsește-ți locuința perfectă în orașe din toată România.
+            </p>
+            
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                <div className="text-2xl font-bold text-blue-600">200+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Proprietăți disponibile</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                <div className="text-2xl font-bold text-blue-600">15+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Orașe acoperite</div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                <div className="text-2xl font-bold text-blue-600">100%</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Verificate</div>
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-10 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              onClick={() => setShowPropertiesModal(true)}
+            >
+              <Search className="w-5 h-5 mr-3" />
+              Vezi Proprietăți
+            </Button>
+            
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+              Contactează direct proprietarii și programează vizionări
+            </p>
           </div>
         </div>
       </section>
@@ -261,6 +310,12 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
           </div>
         </div>
       </footer>
+
+      {/* Properties Modal */}
+      <PropertiesModal 
+        open={showPropertiesModal} 
+        onOpenChange={setShowPropertiesModal} 
+      />
     </div>
   )
 }

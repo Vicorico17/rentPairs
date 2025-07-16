@@ -44,6 +44,32 @@ export interface Property {
   }
 }
 
+// New interface for Partner Properties from the partner_leads table
+export interface PartnerProperty {
+  id: string
+  name: string        // Property contact/owner name
+  address: string     // Property location
+  size: string        // Number of rooms/size
+  created_at: string  // When the lead was added
+  // Derived/computed fields for display
+  displayTitle: string    // Generated title for the property
+  estimatedRent?: number  // Estimated rent based on size/location
+  photos: string[]        // Placeholder photos
+  contactInfo: {
+    name: string
+    displayContact: string
+  }
+}
+
+// Raw data structure from Supabase partner_leads table
+export interface PartnerLead {
+  id: number
+  name: string
+  address: string
+  size: string
+  created_at: string
+}
+
 export interface Message {
   id: string
   senderId: string
