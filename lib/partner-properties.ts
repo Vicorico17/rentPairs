@@ -1,8 +1,14 @@
-import { supabase } from './supabase'
+import { supabase, isSupabaseConfigured } from './supabase'
 import type { PartnerLead, PartnerProperty } from './types'
 
 // Fetch partner leads from Supabase
 export async function fetchPartnerLeads(): Promise<PartnerLead[]> {
+  // Return empty array if Supabase is not configured (during build time)
+  if (!isSupabaseConfigured() || !supabase) {
+    console.warn('Supabase not configured, returning empty partner leads')
+    return []
+  }
+
   const { data, error } = await supabase
     .from('partner_leads')
     .select('*')
