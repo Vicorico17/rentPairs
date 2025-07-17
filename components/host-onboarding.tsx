@@ -126,6 +126,49 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
 
       console.log('💾 Property data to be inserted:', propertyData)
 
+      // Validate required fields before insertion
+      const requiredFields = ['street_address', 'city', 'state', 'monthly_rent', 'security_deposit', 'available_from']
+      const missingFields = requiredFields.filter(field => !propertyData[field as keyof typeof propertyData])
+      
+      if (missingFields.length > 0) {
+        console.error('❌ Missing required fields:', missingFields)
+        setError(`Câmpuri obligatorii lipsesc: ${missingFields.join(', ')}`)
+        return
+      }
+
+      // Additional validation for date format
+      if (!formData.available_from || formData.available_from === '') {
+        console.error('❌ Empty available_from date')
+        setError('Data disponibilității este obligatorie')
+        return
+      }
+
+      // Validate date format (should be YYYY-MM-DD)
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+      if (!dateRegex.test(formData.available_from)) {
+        console.error('❌ Invalid date format for available_from:', formData.available_from)
+        setError('Format invalid pentru data disponibilității')
+        return
+      }
+
+      console.log('✅ Date validation passed:', formData.available_from)
+
+      // Validate numeric fields
+      if (formData.monthly_rent <= 0) {
+        console.error('❌ Invalid monthly rent:', formData.monthly_rent)
+        setError('Chiria lunară trebuie să fie mai mare decât 0')
+        return
+      }
+
+      if (formData.security_deposit < 0) {
+        console.error('❌ Invalid security deposit:', formData.security_deposit)
+        setError('Garanția nu poate fi negativă')
+        return
+      }
+
+      console.log('✅ Numeric validation passed')
+      console.log('✅ All required fields present, attempting database insertion...')
+
       const { data, error } = await supabase
         .from('properties')
         .insert([propertyData])
@@ -133,13 +176,24 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
 
       if (error) {
         console.error('❌ Supabase insertion error:', error)
-        console.error('❌ Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
+        console.error('❌ Full error object:', JSON.stringify(error, null, 2))
+        console.error('❌ Error type:', typeof error)
+        console.error('❌ Error keys:', Object.keys(error))
+        
+        // Try to extract error information more safely
+        const errorMessage = error?.message || (error as any)?.msg || 'Unknown error'
+        const errorCode = error?.code || 'No code'
+        const errorDetails = error?.details || 'No details'
+        const errorHint = error?.hint || 'No hint'
+        
+        console.error('❌ Extracted error info:', {
+          message: errorMessage,
+          code: errorCode,
+          details: errorDetails,
+          hint: errorHint
         })
-        setError('Nu am putut salva proprietatea. Te rog încearcă din nou.')
+        
+        setError(`Nu am putut salva proprietatea. Eroare: ${errorMessage}`)
         return
       }
 
