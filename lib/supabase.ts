@@ -12,6 +12,89 @@ export const supabase = supabaseUrl && supabaseAnonKey
 // Helper function to check if Supabase is available
 export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey)
 
+// Image Upload Utilities
+export const uploadPropertyImage = async (file: File, propertyId?: string): Promise<{ url: string; path: string } | null> => {
+  if (!supabase) {
+    console.error('Supabase is not configured')
+    return null
+  }
+
+  try {
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Tip de fișier neacceptat. Folosește JPEG, PNG, WebP sau GIF.')
+    }
+
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      throw new Error('Fișierul este prea mare. Dimensiunea maximă este 5MB.')
+    }
+
+    // Generate unique filename
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(2, 15)
+    const fileExtension = file.name.split('.').pop()
+    const fileName = `${propertyId || 'temp'}_${timestamp}_${randomString}.${fileExtension}`
+    const filePath = `properties/${fileName}`
+
+    console.log('📤 Uploading image:', fileName)
+
+    // Upload file to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('property-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      })
+
+    if (error) {
+      console.error('❌ Upload error:', error)
+      throw error
+    }
+
+    console.log('✅ Upload successful:', data)
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('property-images')
+      .getPublicUrl(filePath)
+
+    return {
+      url: urlData.publicUrl,
+      path: filePath
+    }
+  } catch (error) {
+    console.error('❌ Error uploading image:', error)
+    throw error
+  }
+}
+
+export const deletePropertyImage = async (filePath: string): Promise<boolean> => {
+  if (!supabase) {
+    console.error('Supabase is not configured')
+    return false
+  }
+
+  try {
+    const { error } = await supabase.storage
+      .from('property-images')
+      .remove([filePath])
+
+    if (error) {
+      console.error('❌ Delete error:', error)
+      return false
+    }
+
+    console.log('✅ Image deleted successfully:', filePath)
+    return true
+  } catch (error) {
+    console.error('❌ Error deleting image:', error)
+    return false
+  }
+}
+
 // Database types for better TypeScript support
 export type Database = {
   public: {

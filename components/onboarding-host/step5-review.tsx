@@ -4,6 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Home, Calendar, Euro, Users, PawPrint, Cigarette } from "lucide-react"
 
+interface ImageData {
+  url: string
+  path: string
+}
+
 interface FormData {
   street_address: string
   city: string
@@ -21,7 +26,7 @@ interface FormData {
   square_feet: number | null
   description: string
   amenities: string[]
-  photos: string[]
+  photos: ImageData[]
 }
 
 export function Step5Review({ formData }: { formData: FormData }) {
@@ -155,7 +160,7 @@ export function Step5Review({ formData }: { formData: FormData }) {
               {formData.photos.slice(0, 6).map((photo, index) => (
                 <div key={index} className="aspect-video bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
                   <img 
-                    src={photo} 
+                    src={photo.url} 
                     alt={`Fotografie ${index + 1}`}
                     className="w-full h-full object-cover"
                   />

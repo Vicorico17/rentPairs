@@ -19,6 +19,11 @@ const steps = [
   { id: 5, name: "Verificare" },
 ]
 
+interface ImageData {
+  url: string
+  path: string
+}
+
 interface HostFormData {
   // Address fields
   street_address: string
@@ -45,7 +50,7 @@ interface HostFormData {
   amenities: string[]
   
   // Photos
-  photos: string[]
+  photos: ImageData[]
 }
 
 export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
@@ -122,7 +127,7 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
         square_feet: formData.square_feet,
         description: formData.description || null,
         amenities: formData.amenities.length > 0 ? formData.amenities : null,
-        photos: formData.photos.length > 0 ? formData.photos : null,
+        photos: formData.photos.length > 0 ? formData.photos.map(photo => photo.url) : null,
         is_active: true,
         verification_status: 'pending' as const,
       }
