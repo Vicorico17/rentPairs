@@ -15,11 +15,21 @@ export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey
 // Image Upload Utilities
 export const uploadPropertyImage = async (file: File, propertyId?: string): Promise<{ url: string; path: string } | null> => {
   if (!supabase) {
-    console.error('Supabase is not configured')
+    console.error('❌ Supabase is not configured')
+    console.error('❌ URL:', supabaseUrl ? 'Set' : 'Missing')
+    console.error('❌ Key:', supabaseAnonKey ? 'Set' : 'Missing')
     return null
   }
 
   try {
+    console.log('📤 Starting upload process...')
+    console.log('📤 File details:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    })
+    
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if (!allowedTypes.includes(file.type)) {
@@ -39,7 +49,8 @@ export const uploadPropertyImage = async (file: File, propertyId?: string): Prom
     const fileName = `${propertyId || 'temp'}_${timestamp}_${randomString}.${fileExtension}`
     const filePath = `properties/${fileName}`
 
-    console.log('📤 Uploading image:', fileName)
+    console.log('📤 Generated file path:', filePath)
+    console.log('📤 Uploading to bucket: property-images')
 
     // Upload file to Supabase Storage
     const { data, error } = await supabase.storage
@@ -50,8 +61,24 @@ export const uploadPropertyImage = async (file: File, propertyId?: string): Prom
       })
 
     if (error) {
-      console.error('❌ Upload error:', error)
-      throw error
+      console.error('❌ Supabase Storage upload error:', error)
+      console.error('❌ Error details:', {
+        message: error.message,
+        name: error.name
+      })
+      
+      // Provide user-friendly error messages based on error message
+      if (error.message.includes('Invalid key') || error.message.includes('Invalid bucket')) {
+        throw new Error('Configurația storage nu este corectă.')
+      } else if (error.message.includes('413') || error.message.includes('too large')) {
+        throw new Error('Fișierul este prea mare pentru a fi încărcat.')
+      } else if (error.message.includes('401') || error.message.includes('unauthorized')) {
+        throw new Error('Acces neautorizat la storage. Configurația nu este corectă.')
+      } else if (error.message.includes('400') || error.message.includes('Bad Request')) {
+        throw new Error('Eroare de validare. Verifică că fișierul este o imagine validă.')
+      } else {
+        throw new Error(`Eroare la încărcare: ${error.message}`)
+      }
     }
 
     console.log('✅ Upload successful:', data)
@@ -61,12 +88,18 @@ export const uploadPropertyImage = async (file: File, propertyId?: string): Prom
       .from('property-images')
       .getPublicUrl(filePath)
 
+    console.log('✅ Public URL generated:', urlData.publicUrl)
+
     return {
       url: urlData.publicUrl,
       path: filePath
     }
   } catch (error) {
     console.error('❌ Error uploading image:', error)
+    if (error instanceof Error) {
+      console.error('❌ Error message:', error.message)
+      console.error('❌ Error stack:', error.stack)
+    }
     throw error
   }
 }
