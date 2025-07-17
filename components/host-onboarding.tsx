@@ -165,12 +165,6 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
         return
       }
 
-      if (availableDate < today) {
-        console.error('❌ Available date is in the past:', formData.available_from)
-        setError('Data disponibilității nu poate fi în trecut')
-        return
-      }
-
       console.log('✅ Date validation passed:', formData.available_from)
 
       // Validate numeric fields

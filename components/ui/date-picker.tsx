@@ -18,7 +18,7 @@ interface DatePickerProps {
   date?: Date
   onDateChange: (date: Date | undefined) => void
   placeholder?: string
-  disabled?: boolean
+  disabled?: boolean | ((date: Date) => boolean)
   className?: string
 }
 
@@ -29,6 +29,24 @@ export function DatePicker({
   disabled = false,
   className
 }: DatePickerProps) {
+  // Handle disabled prop - if it's a boolean, convert to function
+  const disabledFunction = React.useMemo(() => {
+    if (typeof disabled === 'function') {
+      return disabled
+    }
+    
+    if (disabled === true) {
+      return () => true
+    }
+    
+    // Default behavior: disable past dates
+    return (date: Date) => {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      return date < today
+    }
+  }, [disabled])
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -39,7 +57,7 @@ export function DatePicker({
             !date && "text-muted-foreground",
             className
           )}
-          disabled={disabled}
+          disabled={typeof disabled === 'boolean' ? disabled : false}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "dd MMMM yyyy", { locale: ro }) : <span>{placeholder}</span>}
@@ -50,11 +68,7 @@ export function DatePicker({
           mode="single"
           selected={date}
           onSelect={onDateChange}
-          disabled={(date) => {
-            const today = new Date()
-            today.setHours(0, 0, 0, 0) // Reset time to start of day
-            return date < today
-          }}
+          disabled={disabledFunction}
           initialFocus
           locale={ro}
         />

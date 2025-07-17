@@ -12,6 +12,13 @@ interface FormData {
 }
 
 export function Step2Pricing({ formData, updateFormData }: { formData: FormData; updateFormData: (data: Partial<FormData>) => void }) {
+  // Get today's date for validation
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // Parse available_from date for validation
+  const availableFromDate = formData.available_from ? new Date(formData.available_from) : null
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
@@ -53,24 +60,70 @@ export function Step2Pricing({ formData, updateFormData }: { formData: FormData;
         <DatePicker
           date={formData.available_from ? new Date(formData.available_from) : undefined}
           onDateChange={(date) => {
-            updateFormData({ 
-              available_from: date ? date.toISOString().split('T')[0] : '' 
-            })
+            if (date) {
+              // Ensure the selected date is not in the past
+              const selectedDate = new Date(date)
+              selectedDate.setHours(0, 0, 0, 0)
+              
+              if (selectedDate >= today) {
+                updateFormData({ 
+                  available_from: date.toISOString().split('T')[0] 
+                })
+                
+                // If available_to is before the new available_from, clear it
+                if (formData.available_to) {
+                  const availableToDate = new Date(formData.available_to)
+                  if (availableToDate < selectedDate) {
+                    updateFormData({ available_to: '' })
+                  }
+                }
+              }
+            } else {
+              updateFormData({ available_from: '' })
+            }
           }}
           placeholder="Selectează data disponibilității"
         />
+        <p className="text-sm text-gray-500 mt-1">Data nu poate fi în trecut</p>
       </div>
       <div>
         <Label htmlFor="available_to">Disponibil până la (Opțional)</Label>
         <DatePicker
           date={formData.available_to ? new Date(formData.available_to) : undefined}
           onDateChange={(date) => {
-            updateFormData({ 
-              available_to: date ? date.toISOString().split('T')[0] : '' 
-            })
+            if (date) {
+              // Ensure the selected date is after available_from
+              const selectedDate = new Date(date)
+              selectedDate.setHours(0, 0, 0, 0)
+              
+              if (!availableFromDate || selectedDate > availableFromDate) {
+                updateFormData({ 
+                  available_to: date.toISOString().split('T')[0] 
+                })
+              }
+            } else {
+              updateFormData({ available_to: '' })
+            }
           }}
           placeholder="Selectează data limită (opțional)"
+          disabled={(date: Date) => {
+            const checkDate = new Date(date)
+            checkDate.setHours(0, 0, 0, 0)
+            
+            // Disable past dates
+            if (checkDate < today) return true
+            
+            // Disable dates before available_from
+            if (availableFromDate && checkDate <= availableFromDate) return true
+            
+            return false
+          }}
         />
+        {availableFromDate && (
+          <p className="text-sm text-gray-500 mt-1">
+            Data trebuie să fie după {new Date(availableFromDate).toLocaleDateString('ro-RO')}
+          </p>
+        )}
       </div>
     </div>
   )
