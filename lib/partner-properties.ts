@@ -167,13 +167,72 @@ function formatContactInfo(name: string): { name: string; displayContact: string
   }
 }
 
+// Fetch properties from the properties table (host onboarding submissions)
+export async function fetchHostProperties(): Promise<PartnerProperty[]> {
+  console.log('🏠 Fetching host properties from properties table...')
+  
+  // Return empty array if Supabase is not configured (during build time)
+  if (!isSupabaseConfigured() || !supabase) {
+    console.warn('Supabase not configured, returning empty host properties')
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('properties')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('❌ Error fetching host properties:', error)
+    throw new Error('Failed to fetch host properties')
+  }
+
+  console.log(`✅ Fetched ${data?.length || 0} host properties:`, data)
+
+  // Transform properties table data to PartnerProperty format
+  return (data || []).map((property): PartnerProperty => {
+    const displayTitle = `${property.property_type || 'Proprietate'} în ${property.city}`
+    return {
+      id: `host-${property.id}`,
+      name: `Proprietar ${property.city}`, // Since we don't have host name, use city
+      address: property.full_address || `${property.street_address}, ${property.city}, ${property.state}`,
+      size: property.bedrooms ? `${property.bedrooms} camere` : (property.square_feet ? `${property.square_feet} mp` : 'Necunoscut'),
+      created_at: property.created_at,
+      displayTitle,
+      estimatedRent: property.monthly_rent,
+      photos: property.photos || ['/placeholder.jpg'],
+      contactInfo: {
+        name: `Proprietar ${property.city}`,
+        displayContact: 'Contact disponibil după înregistrare'
+      }
+    }
+  })
+}
+
 // Fetch and transform partner properties (main function)
 export async function getPartnerProperties(): Promise<PartnerProperty[]> {
   try {
-    const leads = await fetchPartnerLeads()
-    return transformPartnerLeads(leads)
+    console.log('🔄 Getting all properties (partner leads + host submissions)...')
+    
+    // Fetch both partner leads and host properties
+    const [partnerLeads, hostProperties] = await Promise.all([
+      fetchPartnerLeads(),
+      fetchHostProperties()
+    ])
+    
+    console.log(`📊 Found ${partnerLeads.length} partner leads and ${hostProperties.length} host properties`)
+    
+    const transformedPartnerLeads = transformPartnerLeads(partnerLeads)
+    
+    // Combine both sources
+    const allProperties = [...transformedPartnerLeads, ...hostProperties]
+    
+    console.log(`🎯 Total properties to display: ${allProperties.length}`)
+    
+    return allProperties
   } catch (error) {
-    console.error('Error getting partner properties:', error)
+    console.error('❌ Error getting partner properties:', error)
     return []
   }
 } 

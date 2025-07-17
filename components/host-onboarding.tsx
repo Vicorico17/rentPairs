@@ -78,20 +78,27 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
   const updateFormData = (newData: Partial<HostFormData>) => setFormData((prev) => ({ ...prev, ...newData }))
 
   const handleSubmit = async () => {
+    console.log('🚀 Starting property submission...')
+    console.log('📝 Form data:', formData)
+    
     if (!supabase) {
+      console.error('❌ Supabase client not available')
       setError("Database nu este disponibilă momentan")
       return
     }
 
+    console.log('✅ Supabase client is available')
     setLoading(true)
     setError(null)
 
     try {
       // Create full address for database
       const full_address = `${formData.street_address}, ${formData.city}, ${formData.state}`
+      console.log('🏠 Full address created:', full_address)
       
       // Set host_id to null for now (in real app, this would come from authentication)
       const host_id = null
+      console.log('👤 Host ID set to:', host_id)
 
       const propertyData = {
         host_id,
@@ -117,24 +124,42 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
         verification_status: 'pending' as const,
       }
 
+      console.log('💾 Property data to be inserted:', propertyData)
+
       const { data, error } = await supabase
         .from('properties')
         .insert([propertyData])
         .select()
 
       if (error) {
-        console.error('Error saving property:', error)
+        console.error('❌ Supabase insertion error:', error)
+        console.error('❌ Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
         setError('Nu am putut salva proprietatea. Te rog încearcă din nou.')
         return
       }
 
-      console.log('Property saved successfully:', data)
+      console.log('✅ Property saved successfully!')
+      console.log('📄 Returned data:', data)
+      
+      // Verify the property was actually saved
+      if (data && data.length > 0) {
+        console.log('🎉 Property ID:', data[0].id)
+        console.log('🏠 Saved property:', data[0])
+      }
+      
       onComplete()
     } catch (err) {
-      console.error('Error submitting property:', err)
+      console.error('💥 Unexpected error during submission:', err)
+      console.error('💥 Error stack:', err instanceof Error ? err.stack : 'No stack trace')
       setError('A apărut o eroare neașteptată. Te rog încearcă din nou.')
     } finally {
       setLoading(false)
+      console.log('🏁 Property submission process completed')
     }
   }
 
