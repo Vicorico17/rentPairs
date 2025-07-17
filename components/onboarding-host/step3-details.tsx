@@ -75,6 +75,7 @@ export function Step3Details({ formData, updateFormData }: { formData: FormData;
             type="number"
             placeholder="2"
             min="0"
+            max="50"
             value={formData.bedrooms || ''}
             onChange={(e) => {
               const val = Number.parseInt(e.target.value, 10)
@@ -89,12 +90,15 @@ export function Step3Details({ formData, updateFormData }: { formData: FormData;
             type="number"
             placeholder="1"
             min="0"
+            max="20"
+            step="0.5"
             value={formData.bathrooms || ''}
             onChange={(e) => {
-              const val = Number.parseInt(e.target.value, 10)
+              const val = Number.parseFloat(e.target.value)
               updateFormData({ bathrooms: isNaN(val) ? null : val })
             }}
           />
+          <p className="text-xs text-gray-500 mt-1">Poți introduce valori cu jumătate (ex: 2.5)</p>
         </div>
         <div>
           <Label htmlFor="square_feet">Metri pătrați</Label>
@@ -103,6 +107,7 @@ export function Step3Details({ formData, updateFormData }: { formData: FormData;
             type="number"
             placeholder="80"
             min="0"
+            max="10000"
             value={formData.square_feet || ''}
             onChange={(e) => {
               const val = Number.parseInt(e.target.value, 10)
