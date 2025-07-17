@@ -90,8 +90,8 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
       // Create full address for database
       const full_address = `${formData.street_address}, ${formData.city}, ${formData.state}`
       
-      // Generate a temporary host ID (in real app, this would come from authentication)
-      const host_id = `host_${Date.now()}`
+      // Set host_id to null for now (in real app, this would come from authentication)
+      const host_id = null
 
       const propertyData = {
         host_id,
