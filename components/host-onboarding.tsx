@@ -143,11 +143,28 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
         return
       }
 
-      // Validate date format (should be YYYY-MM-DD)
+      // Validate date format (should be YYYY-MM-DD) and date validity
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/
       if (!dateRegex.test(formData.available_from)) {
         console.error('❌ Invalid date format for available_from:', formData.available_from)
         setError('Format invalid pentru data disponibilității')
+        return
+      }
+
+      // Check if the date is valid and not in the past
+      const availableDate = new Date(formData.available_from)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      
+      if (isNaN(availableDate.getTime())) {
+        console.error('❌ Invalid date value for available_from:', formData.available_from)
+        setError('Data disponibilității nu este validă')
+        return
+      }
+
+      if (availableDate < today) {
+        console.error('❌ Available date is in the past:', formData.available_from)
+        setError('Data disponibilității nu poate fi în trecut')
         return
       }
 

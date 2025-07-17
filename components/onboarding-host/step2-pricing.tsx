@@ -2,6 +2,7 @@
 
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 
 interface FormData {
   monthly_rent: number
@@ -49,20 +50,26 @@ export function Step2Pricing({ formData, updateFormData }: { formData: FormData;
       </div>
       <div>
         <Label htmlFor="available_from">Disponibil de la</Label>
-        <Input
-          id="available_from"
-          type="date"
-          value={formData.available_from}
-          onChange={(e) => updateFormData({ available_from: e.target.value })}
+        <DatePicker
+          date={formData.available_from ? new Date(formData.available_from) : undefined}
+          onDateChange={(date) => {
+            updateFormData({ 
+              available_from: date ? date.toISOString().split('T')[0] : '' 
+            })
+          }}
+          placeholder="Selectează data disponibilității"
         />
       </div>
       <div>
         <Label htmlFor="available_to">Disponibil până la (Opțional)</Label>
-        <Input
-          id="available_to"
-          type="date"
-          value={formData.available_to}
-          onChange={(e) => updateFormData({ available_to: e.target.value })}
+        <DatePicker
+          date={formData.available_to ? new Date(formData.available_to) : undefined}
+          onDateChange={(date) => {
+            updateFormData({ 
+              available_to: date ? date.toISOString().split('T')[0] : '' 
+            })
+          }}
+          placeholder="Selectează data limită (opțional)"
         />
       </div>
     </div>
