@@ -26,7 +26,7 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
       </header>
 
       {/* Hero Section */}
-      <section className="relative flex items-end text-center bg-gray-100 dark:bg-gray-900 min-h-[60vh]">
+      <section className="relative flex items-start text-center bg-gray-100 dark:bg-gray-900 min-h-[60vh]">
         <div
           className="absolute inset-0 bg-cover bg-[center_top] opacity-60"
           style={{
@@ -34,20 +34,11 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
               "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/GettyImages-1461608444.jpg-zCzRyG0ZwC6sNE5I9cY3F3dmXy59VU.jpeg')",
           }}
         />
-        <div className="container mx-auto relative px-4 pb-16 md:pb-20">
+        <div className="container mx-auto relative px-4 pt-16 md:pt-20">
           <h1 className="text-4xl md:text-6xl font-extrabold leading-tight text-gray-900 dark:text-white">
             Setează-ți standarde mai înalte.
           </h1>
-        </div>
-      </section>
-
-      {/* Text and CTA Section - moved from hero */}
-      <section className="py-16 bg-white dark:bg-gray-950 text-center">
-        <div className="container mx-auto px-4">
-          <p className="text-lg md:text-xl max-w-3xl mx-auto text-gray-700 dark:text-gray-200 mb-10">
-            Meriți mai mult. Am creat o metodă mai bună pentru a găsi colegi și locuințe, cu mai puțin stres.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               size="lg"
               className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 rounded-lg"
@@ -64,6 +55,15 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
               Am o locuință
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Description Section - below hero */}
+      <section className="py-16 bg-white dark:bg-gray-950 text-center">
+        <div className="container mx-auto px-4">
+          <p className="text-lg md:text-xl max-w-3xl mx-auto text-gray-700 dark:text-gray-200">
+            Meriți mai mult. Am creat o metodă mai bună pentru a găsi colegi și locuințe, cu mai puțin stres.
+          </p>
         </div>
       </section>
 
