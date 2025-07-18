@@ -78,8 +78,24 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
     photos: [],
   })
 
-  const handleNext = () => setActiveStep((prev) => Math.min(prev + 1, steps.length - 1))
-  const handleBack = () => setActiveStep((prev) => Math.max(prev - 1, 0))
+  const handleNext = () => {
+    // If on step 4 (photos), validate at least one photo before proceeding to review
+    if (activeStep === 3) { // Step 4 is index 3 (0-based)
+      if (!formData.photos || formData.photos.length === 0) {
+        setError('Adaugă cel puțin o fotografie înainte de a continua la pasul de verificare')
+        return
+      }
+    }
+    
+    // Clear any previous errors when moving forward
+    setError(null)
+    setActiveStep((prev) => Math.min(prev + 1, steps.length - 1))
+  }
+  const handleBack = () => {
+    // Clear any errors when going back to allow users to fix issues
+    setError(null)
+    setActiveStep((prev) => Math.max(prev - 1, 0))
+  }
   const updateFormData = (newData: Partial<HostFormData>) => setFormData((prev) => ({ ...prev, ...newData }))
 
   const handleSubmit = async () => {
@@ -133,6 +149,13 @@ export function HostOnboarding({ onComplete }: { onComplete: () => void }) {
       }
 
       console.log('💾 Property data to be inserted:', propertyData)
+
+      // Validate at least one photo is required
+      if (!formData.photos || formData.photos.length === 0) {
+        console.error('❌ No photos uploaded')
+        setError('Este obligatoriu să adaugi cel puțin o fotografie a proprietății')
+        return
+      }
 
       // Validate required fields before insertion
       const requiredFields = ['street_address', 'city', 'state', 'monthly_rent', 'security_deposit', 'available_from']

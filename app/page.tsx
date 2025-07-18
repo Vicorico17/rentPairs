@@ -62,8 +62,8 @@ function Home() {
       navigate("landing")
     } else {
       // For tenants, continue to matching as before
-      setIsAuthenticated(true)
-      navigate("matching")
+    setIsAuthenticated(true)
+    navigate("matching")
     }
   }
 
