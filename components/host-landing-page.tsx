@@ -18,14 +18,6 @@ export function HostLandingPage({ onStartListing }: { onStartListing: () => void
       <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto flex items-center justify-between p-4">
           <AppLogo />
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={onStartListing}>
-              Autentificare
-            </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 rounded-lg" onClick={onStartListing}>
-              Publică Anunț
-            </Button>
-          </div>
         </div>
       </header>
 
@@ -92,18 +84,7 @@ export function HostLandingPage({ onStartListing }: { onStartListing: () => void
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Cum funcționează</h2>
-          <div className="relative grid md:grid-cols-3 gap-8">
-            <div className="absolute w-full top-1/2 -translate-y-1/2 hidden md:block">
-              <svg className="w-full h-1" preserveAspectRatio="none" viewBox="0 0 100 1">
-                <path
-                  d="M 0,0.5 L 100,0.5"
-                  strokeDasharray="5 5"
-                  stroke="currentColor"
-                  className="text-gray-300 dark:text-gray-600"
-                  strokeWidth="2"
-                />
-              </svg>
-            </div>
+          <div className="grid md:grid-cols-3 gap-8">
             <div className="relative text-center p-4">
               <div className="mx-auto w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-4">
                 1

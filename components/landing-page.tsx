@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PropertiesModal } from "@/components/properties-modal"
-import { Users, Home, Building, Twitter, Instagram, Facebook, ShieldCheck, Lock, EyeOff, Search, MapPin } from "lucide-react"
+import { Users, Home, Building, Twitter, Instagram, Facebook, ShieldCheck, Lock, EyeOff, Search, MapPin, Heart } from "lucide-react"
 import * as React from "react"
 
 const AppLogo = () => (
@@ -13,7 +13,7 @@ const AppLogo = () => (
   </div>
 )
 
-export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" | null) => void }) {
+export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" | "property_testing" | null) => void }) {
   const [showPropertiesModal, setShowPropertiesModal] = React.useState(false)
 
   return (
@@ -22,14 +22,6 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
       <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto flex items-center justify-between p-4">
           <AppLogo />
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => onChoice("tenant")}>
-              Autentificare
-            </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 rounded-lg" onClick={() => onChoice("tenant")}>
-              Înregistrare
-            </Button>
-          </div>
         </div>
       </header>
 
@@ -181,14 +173,26 @@ export function LandingPage({ onChoice }: { onChoice: (type: "tenant" | "host" |
               </div>
             </div>
 
-            <Button
-              size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-10 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => setShowPropertiesModal(true)}
-            >
-              <Search className="w-5 h-5 mr-3" />
-              Vezi Proprietăți
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-10 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => setShowPropertiesModal(true)}
+              >
+                <Search className="w-5 h-5 mr-3" />
+                Vezi Proprietăți
+              </Button>
+              
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-lg px-10 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => onChoice("property_testing")}
+              >
+                <Heart className="w-5 h-5 mr-3" />
+                Testează Aplicația
+              </Button>
+            </div>
             
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
               Contactează direct proprietarii și programează vizionări

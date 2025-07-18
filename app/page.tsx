@@ -16,6 +16,7 @@ import { TrustSafetyModule } from "@/components/trust-safety-module"
 import { MatchModal } from "@/components/match-modal"
 import { MOCK_CONVERSATIONS } from "@/lib/data"
 import { HostLandingPage } from "@/components/host-landing-page"
+import { PropertyTestingInterface } from "@/components/property-testing-interface"
 
 type AppState =
   | "landing"
@@ -27,8 +28,9 @@ type AppState =
   | "lease_planning"
   | "post_move_in"
   | "profile"
+  | "property_testing"
 
-type UserType = "tenant" | "host" | null
+type UserType = "tenant" | "host" | "property_testing" | null
 
 function Home() {
   const router = useRouter()
@@ -50,11 +52,19 @@ function Home() {
     setUserType(type)
     if (type === "tenant") navigate("tenant_onboarding")
     if (type === "host") navigate("host_landing")
+    if (type === "property_testing") navigate("property_testing")
   }
 
   const handleOnboardingComplete = () => {
-    setIsAuthenticated(true)
-    navigate("matching")
+    if (userType === "host") {
+      // For hosts, go back to landing page after adding property
+      setUserType(null)
+      navigate("landing")
+    } else {
+      // For tenants, continue to matching as before
+      setIsAuthenticated(true)
+      navigate("matching")
+    }
   }
 
   const handleMatch = () => {
@@ -70,7 +80,14 @@ function Home() {
       case "host_onboarding":
         return <HostOnboarding onComplete={handleOnboardingComplete} />
       case "matching":
-        return <MatchingInterface userType={userType} onMatch={handleMatch} />
+        return <MatchingInterface userType={userType === "property_testing" ? null : userType} onMatch={handleMatch} />
+      case "property_testing":
+        return (
+          <PropertyTestingInterface 
+            onMatch={handleMatch} 
+            onBack={() => navigate("landing")} 
+          />
+        )
       case "chat":
         if (chatId) {
           const conversation = MOCK_CONVERSATIONS.find((c) => c.id === chatId)
@@ -115,6 +132,10 @@ function Home() {
             <AppShell onNavigate={navigate} activeState={appState}>
               {renderContent()}
             </AppShell>
+          ) : appState === "property_testing" ? (
+            <div className="min-h-screen bg-white dark:bg-gray-950">
+              {renderContent()}
+            </div>
           ) : (
             <div className="flex items-center justify-center min-h-screen">{renderContent()}</div>
           )}
